@@ -23,4 +23,13 @@ The log files contain in text the messages that the client sent to the server. T
 
 <unixtime of the time the message was received>_<CRC32 value of the message in decimal>
 
-Tested on Windows 10 using perl 5, version 14, subversion 2 (v5.14.2) built for MSWin32-x86-multi-thread 
+Tested on Windows 10 using perl 5, version 14, subversion 2 (v5.14.2) built for MSWin32-x86-multi-thread.
+Tested on Linux 4.2.0-16-generic #19-Ubuntu SMP Thu Oct 8 15:35:06 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux using perl 5, version 20, subversion 2 (v5.20.2) built for x86_64-linux-gnu-thread-multi.
+
+Prerequisites
+
+Windows: None
+Linux: String::CRC32 To install it toggle perl shell with:
+perl -e shell -MCPAN
+and install the package with:
+install String::CRC32
