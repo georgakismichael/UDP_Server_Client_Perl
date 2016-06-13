@@ -9,8 +9,8 @@ my($result, $udp_client_socket, $DESTIP, $PORTNO, $PROTO, $MAXSZ, $killserver, $
 $result = GetOptions (	
 	"host:s"   	=> \$DESTIP,
 	"port:i" 	=> \$PORTNO,
-	"load:i" 	=> \$load,
 	"size:i" 	=> \$MAXSZ,
+	"load:i" 	=> \$load,
 	"killserver:s" 	=> \$killserver,	
 );
 
@@ -27,16 +27,16 @@ if(!($PORTNO))
 
 }
 
-if(!($load))
-{
-	$load = 100;
-	print "Number of messages argument missing. Assuming $load...\n";
-}
-
 if(!($MAXSZ))
 {
 	$MAXSZ = 1024;
 	print "Message size argument missing. Assuming $MAXSZ bytes...\n";
+}
+
+if(!($load))
+{
+	$load = 100;
+	print "Number of messages argument missing. Assuming $load...\n";
 }
 
 if(($killserver ne "YES") and ($killserver ne "NO"))

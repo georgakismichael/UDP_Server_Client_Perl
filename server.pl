@@ -2,13 +2,38 @@ use strict;
 use warnings;
 use IO::Socket;
 use String::CRC32;
+use Getopt::Long;
 
-my($udp_server_socket, $PORTNO, $PROTO, $MAXSZ, $incoming, $from_address, $from_port, $ServerRunning, $ack, $crc, $unixtime, $directory);
+my($result, $udp_server_socket, $PORTNO, $PROTO, $MAXSZ, $incoming, $from_address, $from_port, $ServerRunning, $ack, $crc, $unixtime, $directory);
 
-$PORTNO = 5152;
+$result = GetOptions (	
+	"port:i" 	=> \$PORTNO,
+	"size:i" 	=> \$MAXSZ,
+	"directory:s" 	=> \$directory,
+);
+
+if(!($PORTNO))
+{
+	$PORTNO = 5152;
+	print "Target Port argument missing. Assuming $PORTNO...\n";
+
+}
+
+if(!($MAXSZ))
+{
+	$MAXSZ = 1024;
+	print "Message size argument missing. Assuming $MAXSZ bytes...\n";
+}
+
+if(!($directory))
+{
+	$directory = "logs";
+	print "Directory argument missing. Assuming $directory ...\n";
+}
+
 $PROTO = 'udp';
-$MAXSZ = 1024;
-$directory = "logs\\";
+
+$directory = $directory."//";
 
 if(!(-d $directory))
 {
@@ -18,6 +43,10 @@ if(!(-d $directory))
 	{
 		die "Unable to create $directory. Exiting...\n";
 	}
+}
+else
+{
+	print "$directory exists\n";
 }
 
 print "Starting $PROTO server on port $PORTNO... ";
@@ -55,9 +84,13 @@ while($ServerRunning)
 	
 	if($incoming eq "killmenow")
 	{
-		print ("\nServer kill message recieved from $from_address. Stopping server...\n");
+		print "\nServer kill message recieved from $from_address. Stopping server...\n";
 		$ServerRunning = 0;
 	}	
+	elsif($incoming eq "hello")
+	{
+		print "Handshake request received.\n"
+	}
 	else
 	{
 		my $filename = $directory.$unixtime."_".$crc;
