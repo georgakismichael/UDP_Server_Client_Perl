@@ -4,7 +4,7 @@ use IO::Socket;
 
 my($udp_server_socket, $PORTNO, $PROTO, $MAXSZ, $incoming, $from_address, $from_port, $ServerRunning, $ack);
 
-$PORTNO = 5151;
+$PORTNO = 5152;
 $PROTO = 'udp';
 $MAXSZ = 1024;
 
