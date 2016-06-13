@@ -41,9 +41,9 @@ while(!$ServerRunning)
 
 my($pkts_fail, $pkts_ok, $stats) =(0, 0);
 
-for( $a = 0; $a < 5000; $a = $a + 1 )
+for($a=0;$a<10; $a+=1)
 {
-	$outgoing = join'', map +(0..9,'a'..'z','A'..'Z')[rand(10+26*2)], 1..8;
+	$outgoing = join'', map +(0..9,'a'..'z','A'..'Z')[rand(10+26*2)], 1..$MAXSZ;
 
 	$udp_client_socket->send($outgoing);
 	$udp_client_socket->recv($ack, $MAXSZ);
