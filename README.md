@@ -10,7 +10,7 @@ Usage for server:
 
 Usage for client:
 
-<perl binaries path> client.pl -host 127.0.0.1 -port 5152 -size 100 -load 50 -killserver NO
+<perl binaries path> client.pl -host -port -size -load -killserver
 -host: The server IP the client will attempt to connect to (Default 127.0.0.1).
 -port: The server port the client will attempt to connect to (Default 5152).
 -size: The message size to expect in bytes. Make sure that the server's message size is greater or equal to this number (Default 1024).
@@ -18,6 +18,7 @@ Usage for client:
 -killserver: If set to YES the client will send a kill command to the server after it has finished sending messages (Default YES).
 
 Log File names
+
 The log files contain in text the messages that the client sent to the server. The naming convention they follow is: 
 
 <unixtime of the time the message was received>_<CRC32 value of the message in decimal>
