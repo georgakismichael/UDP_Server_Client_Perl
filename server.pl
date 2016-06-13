@@ -53,16 +53,18 @@ while($ServerRunning)
 	$udp_server_socket->send($ack);
 	print "Sent $ack to $from_address:$from_port\n";	
 	
-	my $filename = $directory.$unixtime."_".$crc;
-	open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
-	print $fh "$incoming\n";
-	close $fh;
-	
 	if($incoming eq "killmenow")
 	{
 		print ("\nServer kill message recieved from $from_address. Stopping server...\n");
 		$ServerRunning = 0;
 	}	
+	else
+	{
+		my $filename = $directory.$unixtime."_".$crc;
+		open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+		print $fh "$incoming\n";
+		close $fh;	
+	}
 }
 
 $udp_server_socket -> close;
