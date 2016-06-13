@@ -1,8 +1,9 @@
 use strict;
 use warnings;
 use IO::Socket;
+use String::CRC32;
 
-my($udp_server_socket, $PORTNO, $PROTO, $MAXSZ, $incoming, $from_address, $from_port, $ServerRunning, $ack);
+my($udp_server_socket, $PORTNO, $PROTO, $MAXSZ, $incoming, $from_address, $from_port, $ServerRunning, $ack, $crc, $unixtime);
 
 $PORTNO = 5152;
 $PROTO = 'udp';
@@ -27,9 +28,11 @@ while($ServerRunning)
 	#get the peerhost and peerport at which the recent data received.
 	$from_address = $udp_server_socket->peerhost();
 	$from_port = $udp_server_socket->peerport();
-	print "\n($from_address , $from_port) said : $incoming\n";
+	$crc = crc32($incoming);
+	$unixtime = time;
+	print "\n$unixtime : ($from_address , $from_port) said : $incoming ($crc)\n";
 
-	$ack = "ACK";
+	$ack = "ACK_".$crc;
 	$udp_server_socket->send($ack);
 	print "Sent $ack to $from_address:$from_port\n";
 	

@@ -1,8 +1,9 @@
 use strict;
 use warnings;
 use IO::Socket;
+use String::CRC32;
 
-my($udp_client_socket, $DESTIP, $PORTNO, $PROTO, $MAXSZ, $outgoing, $ServerRunning, $ack);
+my($udp_client_socket, $DESTIP, $PORTNO, $PROTO, $MAXSZ, $outgoing, $ServerRunning, $ack, $ack_str, $checksum);
 
 $PORTNO = 5152;
 $PROTO = 'udp';
@@ -23,8 +24,10 @@ while(!$ServerRunning)
 	$outgoing = "hello";
 	$udp_client_socket->send($outgoing);
 	$udp_client_socket->recv($ack, $MAXSZ);
-
-	if($ack eq "ACK")
+	
+	my($ack_str, $checksum) = split(/_/, $ack);
+	
+	if(($ack_str eq "ACK") and ($checksum == crc32($outgoing)))
 	{
 		print ("Server is alive!\n");
 		$ServerRunning = 1;
@@ -36,24 +39,35 @@ while(!$ServerRunning)
 	}	
 }
 
-for( $a = 1; $a < 200; $a = $a + 1 )
+my($pkts_fail, $pkts_ok, $stats) =(0, 0);
+
+for( $a = 0; $a < 5000; $a = $a + 1 )
 {
 	$outgoing = join'', map +(0..9,'a'..'z','A'..'Z')[rand(10+26*2)], 1..8;
 
 	$udp_client_socket->send($outgoing);
 	$udp_client_socket->recv($ack, $MAXSZ);
 	
-	if($ack ne "ACK")
+	my($ack_str, $checksum) = split(/_/, $ack);
+	
+	if(($ack_str ne "ACK") or ($checksum != crc32($outgoing)))
 	{
-		die "No ACK!!!";
-	}		
+		$pkts_fail+=1;
+	}
+	else
+	{
+		$pkts_ok+=1;
+	}	
 }
+
+$stats = ($pkts_ok/($pkts_ok + $pkts_fail))*100;
+
+print "$pkts_fail packets failed and $pkts_ok packets were transmitted properly ($stats%)\n";
 
 $outgoing = "killmenow";
 
 $udp_client_socket->send($outgoing);
 $udp_client_socket->recv($ack, $MAXSZ);
-print "Data received from socket : $ack\n";
 
 sleep(2);
 
